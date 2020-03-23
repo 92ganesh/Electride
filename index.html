@@ -1,0 +1,25 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<button onclick="osm()">olla</button>
+<p id="ds"></p>
+
+<script>
+	function osm(){
+		console.log("started");
+		xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				document.getElementById("ds").innerHTML= this.responseText;
+			}
+		};
+		xmlhttp.open("GET", "/api/0.6/map?bbox=72.8352,19.1081,72.8551,19.1193", true);
+		xmlhttp.setRequestHeader("Accept", "application/json");
+		xmlhttp.send();
+	}
+</script>
+</body>
+</html>
