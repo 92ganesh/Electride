@@ -1,26 +1,53 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 
+    <title>Leaflet - Just a map</title>
+    
+    <!-- Point at the CDN "hosted" CSS and javascript of leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+
+    <style>
+    #map { height: 400px; width:400px; }
+    </style>
 </head>
-<body>
+<body onLoad="javascript:init();">
+  
+<div id="mydiv"></div>
 
-<button onclick="osm()">olla5</button>
-<p id="ds"></p>
+<script src="index.js"></script> 
+<script src="graph.js"></script> 
+<script type="text/babel">
+class Hello extends React.Component {
+  render() {
+    return (
+        <div>
+            <div>
+				<button  onClick={setMarkerColorBlue}  style={{ background:"blue", color:"white"}}>mark source</button>
+                <button  onClick={setMarkerColorRed}  style={{ background:"red", color:"white"}}>mark destination</button>
 
-<script>
-	function osm(){
-		console.log("started");
-		xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				document.getElementById("ds").innerHTML= this.responseText;
-				
-			}
-		};
-		xmlhttp.open("GET", "https://api.openstreetmap.org/api/0.6/map?bbox=72.86617,19.13006,72.87116,19.13286", true);
-		xmlhttp.setRequestHeader("Accept", "application/json");
-		xmlhttp.send();
-	}
+                <b style={{ margin:20}}>Choose the algorithm:</b>
+                <select id="algo">
+                <option value="dijkstra">Dijkstra</option>
+                <option value="floydWarshall">Floyd warshall</option>
+                <option value="bellmanFord">Bellman Ford</option>
+                </select>
+
+                <button id="getPath" onClick={findShortestPath}>get path</button>
+            </div> <br/><br/>
+            <div id="map"></div>
+        </div>
+    );
+  }
+}
+
+ReactDOM.render(<Hello />, document.getElementById('mydiv'))
 </script>
+
 </body>
 </html>

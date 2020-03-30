@@ -6,7 +6,7 @@ function readMap(){
             createGraph(jsonFile.elements);
 		}
 	};
-	xmlhttp.open("GET", "https://raw.githubusercontent.com/92ganesh/Electride/master/sample.json", true);
+	xmlhttp.open("GET", "https://api.openstreetmap.org/api/0.6/map?bbox=72.86617,19.13006,72.87116,19.13286", true);
 	xmlhttp.setRequestHeader("Accept", "application/json");
 	xmlhttp.send();
 }
