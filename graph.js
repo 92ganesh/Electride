@@ -47,43 +47,50 @@ function createGraph(elements){
     	}
     }
     
-    var minDist=Infinity; var destinationId = -1;
-    for(let node of nodesOnWay.keys()){
-    	var temp = calcGeoDist(destinationSelected, nodes.get(node));
-    	if(temp<minDist){
-    		minDist = temp;  
-    		destinationId = node;
-    	}
-    }
-    
     var circle = L.circle([nodes.get(sourceId).lat, nodes.get(sourceId).lng], {
   	    color: 'blue',
   	    fillColor: 'yellow',
   	    fillOpacity: 0.5,
   	    radius: 10
   		}).addTo(map);
+  		
+  	
+  	var approxDestinations = [];
+  	for(var i=0; i<destinationSelected.length;i++){
+  		var minDist=Infinity; var destinationId = -1;
+	    for(let node of nodesOnWay.keys()){
+	    	var temp = calcGeoDist(destinationSelected[i], nodes.get(node));
+	    	if(temp<minDist){
+	    		minDist = temp;  
+	    		destinationId = node;
+	    	}
+	    }
+		
+		approxDestinations.push(destinationId);
+	    var circle = L.circle([nodes.get(destinationId).lat, nodes.get(destinationId).lng], {
+	  	    color: 'red',
+	  	    fillColor: 'yellow',
+	  	    fillOpacity: 0.5,
+	  	    radius: 10
+	  		}).addTo(map);
+  	}
     
-    var circle = L.circle([nodes.get(destinationId).lat, nodes.get(destinationId).lng], {
-  	    color: 'red',
-  	    fillColor: 'yellow',
-  	    fillOpacity: 0.5,
-  	    radius: 10
-  		}).addTo(map);
+    
  
  	var algorithm = document.getElementById("algo").value;
  	if(algorithm=="dijkstra"){
  		 console.log("using Dijkstra");
- 		 dijkstra(nodes, graph, sourceId, destinationId);
+ 		 dijkstra(nodes, graph, sourceId, approxDestinations);
  	}else if(algorithm=="floydWarshall"){
  		 console.log("using floydWarshall");
- 		 floydWarshall(nodes, graph, sourceId, destinationId);
+ 		 floydWarshall(nodes, graph, sourceId, approxDestinations);
  	}else if(algorithm=="bellmanFord"){
  		 console.log("using bellmanFord");
- 		 bellmanFord(nodes, graph, sourceId, destinationId);
+ 		 bellmanFord(nodes, graph, sourceId, approxDestinations);
  	}
 }
 
-function bellmanFord(nodes, graph, source, destination){
+function bellmanFord(nodes, graph, source, approxDestinations){
 	let distance = new Map();
 	let parent = new Map();
 	for(let node of graph.keys()){
@@ -110,18 +117,21 @@ function bellmanFord(nodes, graph, source, destination){
 	}
 	
 	// find path
-	var path = [];
-	curr = destination;
-	while(curr!=null){
-		path.push(nodes.get(curr));
-		curr = parent.get(curr);
+	for(var i=0; i<approxDestinations.length; i++){
+		var path = [];
+		curr = approxDestinations[i];
+		while(curr!=null){
+			path.push(nodes.get(curr));
+			curr = parent.get(curr);
+		}
+		
+		highlightPath(path);
 	}
 	
-	highlightPath(path);
 }
 
 
-function floydWarshall(nodes, graph, source, destination){
+function floydWarshall(nodes, graph, source, approxDestinations){
 	let disMatrix = new Map();
 	let next = new Map();
 	for (let node of graph.keys()) {
@@ -152,21 +162,24 @@ function floydWarshall(nodes, graph, source, destination){
 	
 	
 	// find path
-	var path = [];
-	if(next.has(source) && next.get(source).has(destination)){
-		var u = source;   var v = destination;
-		path.push(nodes.get(u));
-		while(u!=v){
-			u = next.get(u).get(v);
+	for(var i=0; i<approxDestinations.length; i++){
+		var path = [];
+		if(next.has(source) && next.get(source).has(approxDestinations[i])){
+			var u = source;   var v = approxDestinations[i];
 			path.push(nodes.get(u));
+			while(u!=v){
+				u = next.get(u).get(v);
+				path.push(nodes.get(u));
+			}
 		}
+		
+		highlightPath(path);
 	}
 	
-	highlightPath(path);
 }
 
 
-function dijkstra(nodes, graph, source, destination){
+function dijkstra(nodes, graph, source, approxDestinations){
 	let nodeInfo = new Map();
 	for (let node of nodes.keys()) {
 		nodeInfo.set(node,{minDist:Infinity, parent:null, visited:false});
@@ -176,7 +189,6 @@ function dijkstra(nodes, graph, source, destination){
 	var queue = new Map();
 	queue.set(source,null);
 	
-	var itr=0;
 	while(queue.size>0){
 		var minDist = Infinity;  var minNode = -1;
 		for(let ele of queue.keys()){
@@ -200,12 +212,15 @@ function dijkstra(nodes, graph, source, destination){
 		}
 	}
 	
-	var path = [];
-	curr = destination;
-	while(curr!=null){
-		path.push(nodes.get(curr));
-		curr = nodeInfo.get(curr).parent
-	}
 	
-	highlightPath(path);
+	for(var i=0; i<approxDestinations.length; i++){
+		var path = [];
+		curr = approxDestinations[i];
+		while(curr!=null){
+			path.push(nodes.get(curr));
+			curr = nodeInfo.get(curr).parent
+		}
+		
+		highlightPath(path);
+	}
 }

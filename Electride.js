@@ -1,41 +1,8 @@
-<html>
-<head>
-   <title>Leaflet - Just a map</title>
-   
-   <!-- Point at the CDN "hosted" CSS and javascript of leaflet -->
-   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-
- 
-   <style>
-   #map { height: 400px; width:400px; }
-   </style>
-</head>
-<body onLoad="javascript:init();">
-	<div>
-		<button onclick="setMarkerColorBlue()" style="background:blue; color:white">mark source</button>
-		<button onclick="setMarkerColorRed()" style="background:red; color:white">mark destination</button>
-		
-		<label for="algo">Choose the algo:</label>
-		<select id="algo">
-		  <option value="dijkstra">Dijkstra</option>
-		  <option value="floydWarshall">Floyd warshall</option>
-		  <option value="bellmanFord">Bellman Ford</option>
-		</select>
-		<button id="getPath" onclick="findShortestPath()">get path</button>
-	</div> <br><br>
-	
-   <div id="map"></div>
-   
-   
-   <script src="graph.js"></script> 
-   <script language="javascript">
-   	  var map;
+ 	  var map;
    	  var markerType=0;
    	  var sourceSelected=null; 
    	  var destinationSelected= [];
-   	  
-   	  
+
       function init() {
       	 map = L.map('map');
       	 
@@ -94,22 +61,3 @@
     		document.getElementById("getPath").style.display = "none";
     		readMap();
     	}
-    	
-   </script>
-</body>                                                                                                                          
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
